@@ -39,21 +39,7 @@ Update_beta_sig_phi_NSBSR = function(mcmcobj,simdata,beta.mu0=0,beta.sig20=100,a
   interp.surface(curr.obj, loc)-> look
   corr1 = matrix(look,ncol=sqrt(length(look)),byrow=T); corr1[is.na(corr1)] <- 0
   
-  # Matern example
-  # temp = Pred.grid[,c("x","y")]
-  # Rstar = matrix(c(1,0,0,1),2,2)
-  # an.loc  = t(Rstar%*%t(temp))
-  # distvec = as.vector(as.matrix(dist(an.loc)))
-  # predcormtx = matrix(Matern(distvec,smoothness=0.5,range=10),ncol=nrow(Pred.grid))
-  # esticormtx = predcormtx[which(data0$obs==4),which(data0$obs==4)]
-  temp = Esti.grid[,c("x","y")]
-  Rstar = matrix(c(1,0,0,1),2,2)
-  an.loc  = t(Rstar%*%t(temp))
-  distvec = as.vector(as.matrix(dist(an.loc)))
-  esticormtx = matrix(Matern(distvec,smoothness=0.5,range=10),ncol=nrow(Esti.grid))
-  corr2 = matrix(esticormtx[,1],n,n)
-  
-  corr  = 0.25*corr1 + 0.75*corr2
+  corr  = corr1
   
   temp = toeplitz.spam(c(1:n))%>%as.matrix
   temp2 = lapply(c(1:n),function(w) circulant.spam(corr[,w]))
@@ -81,12 +67,7 @@ Update_beta_sig_phi_NSBSR = function(mcmcobj,simdata,beta.mu0=0,beta.sig20=100,a
   beta.sig2.star <- solve(t(Xobs)%*%comp1 + 1/beta.sig20);
   beta.sig2.star = (beta.sig2.star + t(beta.sig2.star) )/2# numerical adjustment
   beta.mu.star   <- beta.sig2.star%*%(t(Xobs)%*%comp2 + 1/beta.sig20*beta.mu0*rep(1,length(betahat)))
-  beta.mu0 = 0
-  # Update beta
-  # beta.sig2.star <- solve(t(Xobs)%*%solve(cor_mtx)%*%Xobs + 1/beta.sig20);
-  # beta.sig2.star = (beta.sig2.star + t(beta.sig2.star) )/2# numerical adjustment
-  # beta.mu.star   <- beta.sig2.star%*%(t(Xobs)%*%solve(cor_mtx)%*%Yobs  + 1/beta.sig20*beta.mu0*rep(1,length(betahat)))
-
+  
   seednum <- seednum + 10; set.seed(seednum)
   if(is.positive.definite(beta.sig2.star)){
     new.betahat <- matrix(mvrnorm(1,beta.mu.star,beta.sig2.star),length(beta.mu.star),ncol=1)
@@ -130,9 +111,7 @@ Update_Theta_NSBSR = function(mcmcobj,simdata){
   new.mcmcobj <- mcmcobj
   
   n2 = simdata$nobs; mbar = ceiling(n2/2); n = sqrt(n2); m = ceiling((n+1)/2)
-  # data00 = data.frame(simdata$map,simdata$X,simdata$E,simdata$Y) %>% filter(obs==4)
   data00 = data.frame(simdata$map,simdata$X,simdata$Y) %>% filter(obs>0)
-  # Xobs <- data00 %>% dplyr::select(X0,X1,X2) %>% as.matrix; Yobs <- data00$simdata.Y
   Xobs <- simdata$X[data0$obs>0 & is.na(data0$obs)==FALSE,] %>% as.matrix; Yobs <- data00$simdata.Y
   Esti.grid = data00 %>% dplyr::select("x","y","w.x","w.y")
   seednum <- mcmcobj$seed
