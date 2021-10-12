@@ -9,7 +9,7 @@ require(rgdal)
 require(gdalUtils)
 require(raster)
 require(ggmap)
-register_google(key="AIzaSyCjtzlHwGhbI0qqwF5AukJ_LcjfZ0P-ffY")
+
 mymap  = get_map(location = c(lon = 127.024612, lat = 37.532600), zoom = 5, maptype = "satellite");plot(mymap)
 mymap2  = get_map(location = c(lon = 127.024612, lat = 37.532600), zoom = 5, maptype = "terrain-labels");plot(mymap2)
 mymap3 = get_map(location = c(lon = 127.024612, lat = 37.532600), zoom = 5, maptype = "toner-lines");plot(mymap3)
