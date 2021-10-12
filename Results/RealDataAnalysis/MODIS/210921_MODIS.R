@@ -48,7 +48,6 @@ for(weekind in 1:13){
 
 
 # image plot over googlemap
-register_google(key="AIzaSyBNd9Hvi6KUMAtGRgwJVxy5kIxQiKh9kSo")
 mymap  = get_map(location = c(lon = 127.024612, lat = 37.532600), zoom = 5, maptype = "satellite");plot(mymap)
 mymap2  = get_map(location = c(lon = 127.024612, lat = 37.532600), zoom = 5, maptype = "terrain-labels");plot(mymap2)
 mymap3 = get_map(location = c(lon = 127.024612, lat = 37.532600), zoom = 5, maptype = "toner-lines");plot(mymap3)
