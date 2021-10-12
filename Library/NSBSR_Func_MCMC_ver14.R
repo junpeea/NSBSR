@@ -37,7 +37,7 @@ Update_beta_sig_phi_NSBSR = function(mcmcobj,simdata,beta.mu0=0,beta.sig20=100,a
   # make.surface.grid( list(seq(0,simdata$D[1]),seq(0,simdata$D[2])) )-> loc
   make.surface.grid( list(seq(0,(n-1),by=1),seq(0,(n-1),by=1)) )-> loc
   interp.surface(curr.obj, loc)-> look
-  corr1 = matrix(look,ncol=sqrt(length(look)),byrow=T); corr1[is.na(corr1)] <- 0
+  corr1 = matrix(look,ncol=sqrt(length(look)),byrow=T)
   
   corr  = corr1
   
@@ -296,22 +296,7 @@ Predict_NSBSR = function(mcmcobj,Esti.summary,simdata){
   interp.surface(curr.obj, loc)-> look
   corr1 = matrix(look,ncol=sqrt(length(look)),byrow=T); corr1[is.na(corr1)] <- 0
   
-  # Matern example
-  # temp = Pred.grid[,c("x","y")]
-  # Rstar = matrix(c(1,0,0,1),2,2)
-  # an.loc  = t(Rstar%*%t(temp))
-  # distvec = as.vector(as.matrix(dist(an.loc)))
-  # predcormtx = matrix(Matern(distvec,smoothness=0.5,range=10),ncol=nrow(Pred.grid))
-  # esticormtx = predcormtx[which(data0$obs==4),which(data0$obs==4)]
-  # corr2 = matrix(esticormtx[,1],n,n)
-  temp = Esti.grid[,c("x","y")]
-  Rstar = matrix(c(1,0,0,1),2,2)
-  an.loc  = t(Rstar%*%t(temp))
-  distvec = as.vector(as.matrix(dist(an.loc)))
-  esticormtx = matrix(Matern(distvec,smoothness=0.5,range=10),ncol=nrow(Esti.grid))
-  corr2 = matrix(esticormtx[,1],n,n)
-  
-  corr  = 0.25*corr1 + 0.75*corr2
+  corr  = corr1
   
   temp = toeplitz.spam(c(1:n))%>%as.matrix
   temp2 = lapply(c(1:n),function(w) toeplitz.spam(corr[,w]))
